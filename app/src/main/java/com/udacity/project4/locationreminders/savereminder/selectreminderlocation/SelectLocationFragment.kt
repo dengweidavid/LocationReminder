@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -26,7 +25,6 @@ import org.koin.android.ext.android.inject
 import java.util.*
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
-
     companion object {
         private const val TAG = "SelectLocationFragment"
         private const val REQUEST_LOCATION_PERMISSION = 1
@@ -66,9 +64,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_COORDINATES, DEFAULT_ZOOM_LEVEL))
-        map.addMarker(MarkerOptions().position(DEFAULT_COORDINATES))
 
         setMapStyle(map)
         setMapLongClick(map)
@@ -208,7 +204,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 ) {
                     enableMyLocation()
                 } else {
-                    Toast.makeText(context, "User denied permission!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.permission_denied_explanation), Toast.LENGTH_SHORT).show()
                 }
                 return
             }
