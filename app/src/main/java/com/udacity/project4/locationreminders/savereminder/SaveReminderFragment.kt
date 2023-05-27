@@ -43,9 +43,9 @@ class SaveReminderFragment : BaseFragment() {
         private const val LOCATION_PERMISSION_INDEX = 0
         private const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
 
-        private const val GEOFENCE_RADIUS_IN_METERS = 100f
+        private const val GEOFENCE_RADIUS_IN_METERS = 500f
 
-        private const val ACTION_GEOFENCE_EVENT =
+        const val ACTION_GEOFENCE_EVENT =
             "SaveReminderFragment.project4.action.ACTION_GEOFENCE_EVENT"
     }
 
