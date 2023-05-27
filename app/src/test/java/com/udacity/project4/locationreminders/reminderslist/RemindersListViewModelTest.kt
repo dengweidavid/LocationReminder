@@ -6,10 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
 import org.junit.*
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
@@ -30,6 +27,11 @@ class RemindersListViewModelTest {
             ApplicationProvider.getApplicationContext(),
             fakeDataSource
         )
+    }
+
+    @After
+    fun tearDown() {
+        stopKoin()
     }
 
     @Test
