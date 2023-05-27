@@ -39,6 +39,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private var marker: Marker? = null
 
+    @Suppress("DEPRECATION")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -139,6 +140,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         inflater.inflate(R.menu.map_options, menu)
     }
 
+    @Suppress("DEPRECATION")
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.normal_map -> {
             map.mapType = GoogleMap.MAP_TYPE_NORMAL
@@ -166,6 +168,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         if (isPermissionGranted()) {
@@ -179,6 +182,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
