@@ -53,6 +53,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintVersion"
 
     // Architecture Components & Navigation dependencies
+    testImplementation project(path: ':app')
+    androidTestImplementation project(path: ':app')
     implementation "androidx.lifecycle:lifecycle-extensions:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleKtxVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$archLifecycleKtxVersion"
@@ -104,6 +106,8 @@ dependencies {
     implementation "androidx.test:core:$androidXTestCoreVersion"
     androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
     androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:$dexMakerVersion"
+
+    androidTestImplementation("io.insert-koin:koin-test:$koinVersion")
 
     // Maps & Geofencing
     implementation "com.google.android.gms:play-services-location:$playServicesLocationVersion"
