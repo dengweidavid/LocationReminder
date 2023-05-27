@@ -94,7 +94,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun setMapLongClick(map: GoogleMap) {
-        map.setOnMapLongClickListener { latLng ->
+        map.setOnMapClickListener { latLng ->
             // A Snippet is Additional text that's displayed below the title.
             val snippet = String.format(
                 Locale.getDefault(),
