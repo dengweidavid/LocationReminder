@@ -5,8 +5,13 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.getOrAwaitValue
+import com.udacity.project4.locationreminders.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.pauseDispatcher
+import kotlinx.coroutines.test.resumeDispatcher
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
 import org.junit.*
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
@@ -16,6 +21,9 @@ import org.koin.core.context.stopKoin
 class RemindersListViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var viewModel: RemindersListViewModel
     private lateinit var fakeDataSource: FakeDataSource
@@ -35,20 +43,47 @@ class RemindersListViewModelTest {
     }
 
     @Test
-    fun loadReminders_givenErrorDataSource_showsSnackBarErrorMessageAndShowNoData() =
+    fun loadReminders_shouldReturnError() =
         runTest {
-            // GIVEN: the dataSource return errors.
+            // GIVEN should return error
             fakeDataSource.setShouldReturnError(true)
-            val errorMessage = "Reminders not found!"
+
+            val reminder1 = ReminderDataItem(
+                "Title todo1",
+                "Description todo1",
+                "Location todo1",
+                250.0,
+                350.0)
+            fakeDataSource.saveReminder(reminder1.toReminderDTO())
 
             // WHEN load reminders
             viewModel.loadReminders()
 
-            // THEN
-            // Show error message in SnackBar
-            Assert.assertEquals(errorMessage, viewModel.showSnackBar.getOrAwaitValue())
-            // showNoData is true
-            Assert.assertEquals(true, viewModel.showNoData.getOrAwaitValue())
+            // THEN show error message in SnackBar
+            MatcherAssert.assertThat(
+                viewModel.showSnackBar.value, CoreMatchers.`is`("Reminders not found")
+            )
+        }
+
+    @Test
+    fun check_loading() =
+        runTest {
+            mainCoroutineRule.pauseDispatcher()
+
+            val reminder1 = ReminderDataItem(
+                "Title todo1",
+                "Description todo1",
+                "Location todo1",
+                250.0,
+                350.0)
+            fakeDataSource.saveReminder(reminder1.toReminderDTO())
+
+            viewModel.loadReminders()
+
+            MatcherAssert.assertThat(viewModel.showLoading.value, CoreMatchers.`is`(true))
+
+            mainCoroutineRule.resumeDispatcher()
+            MatcherAssert.assertThat(viewModel.showLoading.value, CoreMatchers.`is`(false))
         }
 
     @Test
