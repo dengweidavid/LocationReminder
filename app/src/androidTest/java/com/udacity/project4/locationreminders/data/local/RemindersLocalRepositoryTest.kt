@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
 import org.junit.*
 import org.junit.runner.RunWith
 
@@ -88,6 +89,8 @@ class RemindersLocalRepositoryTest {
             // THEN Error is return.
             val error = (result is Result.Error)
             Assert.assertEquals(true, error)
+            result as Result.Error
+            Assert.assertEquals("Reminder not found!", result.message)
         }
     }
 
