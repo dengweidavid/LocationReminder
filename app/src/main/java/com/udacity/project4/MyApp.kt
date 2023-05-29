@@ -28,7 +28,7 @@ class MyApp : Application() {
 				)
 			}
 
-			viewModel {
+			single {
 				SaveReminderViewModel(
 					get(),
 					get() as ReminderDataSource
