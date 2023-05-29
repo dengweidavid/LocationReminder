@@ -117,6 +117,14 @@ class SaveReminderFragment : BaseFragment() {
         }
     }
 
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            checkDeviceLocationSettingsAndStartGeofence(false)
+        }
+    }
+
     private fun checkPermissionsAndStartGeofencing() {
         if (foregroundAndBackgroundLocationPermissionApproved()) {
             checkDeviceLocationSettingsAndStartGeofence()
@@ -180,21 +188,10 @@ class SaveReminderFragment : BaseFragment() {
 
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve) {
-                // Location settings are not satisfied, but this can be fixed
-                // by showing the user a dialog.
-                try {
-                    // Show the dialog by calling startResolutionForResult(),
-                    // and check the result in onActivityResult().
-                    exception.startResolutionForResult(
-                        this@SaveReminderFragment.requireActivity(),
-                        REQUEST_TURN_DEVICE_LOCATION_ON
-                    )
-                } catch (sendEx: IntentSender.SendIntentException) {
-                    Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
-                }
+                startIntentSenderForResult(exception.resolution.intentSender, REQUEST_TURN_DEVICE_LOCATION_ON, null, 0, 0, 0, null)
             } else {
                 Snackbar.make(
-                    binding.saveReminder,
+                    requireActivity().findViewById(android.R.id.content),
                     R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
                 ).setAction(android.R.string.ok) {
                     checkDeviceLocationSettingsAndStartGeofence()
@@ -238,25 +235,21 @@ class SaveReminderFragment : BaseFragment() {
             .addGeofence(geofence)
             .build()
 
-        // First, remove any existing geofences that use our pending intent
-        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-            // Regardless of success/failure of the removal, add the new geofence
-            addOnCompleteListener {
-                // Add the new geofence request with the new geofence
-                geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-                    addOnSuccessListener {
-                        // Geofences added.
-                        Toast.makeText(context, R.string.geofence_added, Toast.LENGTH_SHORT).show()
-                        Log.e("Add Geofence", geofence.requestId)
-                        _viewModel.validateAndSaveReminder(reminderItem)
-                    }
-                    addOnFailureListener {
-                        // Failed to add geofences.
-                        _viewModel.showSnackBarInt.value = R.string.error_adding_geofence
-                    }
-                }
+
+        // Add the new geofence request with the new geofence
+        geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
+            addOnSuccessListener {
+                // Geofences added.
+                Log.i("Add Geofence", geofence.requestId)
+                _viewModel.validateAndSaveReminder(reminderItem)
+                _viewModel.onAddGeofencingSucceeded()
+            }
+            addOnFailureListener {
+                // Failed to add geofences.
+                _viewModel.onAddGeofencingFailed()
             }
         }
+
         _viewModel.onClear()
     }
 
@@ -273,9 +266,9 @@ class SaveReminderFragment : BaseFragment() {
                     grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
                     PackageManager.PERMISSION_DENIED))
         {
-            // Permission denied.
+            // Permission denied.`
             Snackbar.make(
-                binding.saveReminder,
+                requireActivity().findViewById(android.R.id.content),
                 R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
             )  .setAction(R.string.settings) {
                 // Displays App settings screen.
