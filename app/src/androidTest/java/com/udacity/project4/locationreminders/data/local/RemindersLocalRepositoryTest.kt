@@ -75,7 +75,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun reminderRepo_getReminder_returnError() = runBlocking {
+    fun reminderRepo_getReminder_returnNull() = runBlocking {
         wrapEspressoIdlingResource{
             // GIVEN - Database is empty
             localRepository.deleteAllReminders() //make sure the repository is empty

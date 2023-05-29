@@ -61,7 +61,7 @@ class RemindersListViewModelTest {
 
             // THEN show error message in SnackBar
             MatcherAssert.assertThat(
-                viewModel.showSnackBar.value, CoreMatchers.`is`("Reminders not found")
+                viewModel.showSnackBar.value, CoreMatchers.`is`("Exception error!")
             )
         }
 
